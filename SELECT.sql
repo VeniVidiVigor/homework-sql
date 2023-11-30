@@ -8,7 +8,7 @@ LIMIT 1;
 -- Название треков, продолжительность которых не менее 3,5 минут
 SELECT track_name, duration 
 FROM track_list
-WHERE duration > 210
+WHERE duration >= 210
 
 -- Названия сборников, вышедших в период с 2018 по 2020 год включительно
 SELECT compilation_name 
@@ -23,15 +23,21 @@ WHERE LENGTH(artist_name) - LENGTH(REPLACE(artist_name, ' ', '')) + 1 = 1;
 -- Название треков, которые содержат слово «мой» или «my»
 SELECT track_name
 FROM track_list
-WHERE track_name LIKE '%мой%' OR track_name LIKE '%my%';
+WHERE 
+    track_name ILIKE '% мой %'
+    OR track_name ILIKE '% my %'
+    OR track_name ILIKE 'мой %'
+    OR track_name ILIKE 'my %'
+    OR track_name ILIKE '% мой'
+    OR track_name ILIKE '% my';
 
-
+   
 -- Задание 3
 -- Количество исполнителей в каждом жанре
-SELECT genre_name, COUNT(*)
-FROM genres
-GROUP BY genre_name
-ORDER BY COUNT(*) DESC 
+SELECT g.genre_name, COUNT(ag.ArtistID) AS artist_count 
+FROM genres g
+LEFT JOIN artists_genres ag ON g.genreid = ag.genreid
+GROUP BY g.genreid 
 
 -- Количество треков, вошедших в альбомы 2019–2020 годов
 SELECT COUNT(*) AS total_tracks
@@ -46,12 +52,15 @@ JOIN track_list tl ON a.AlbumID = tl.AlbumID
 GROUP BY a.album_name, a.release_year;
 
 -- Все исполнители, которые не выпустили альбомы в 2020 году
-SELECT ar.artist_name
-FROM artists ar
-LEFT JOIN artist_albums aa ON ar.ArtistID = aa.ArtistID
-LEFT JOIN albums al ON aa.AlbumID = al.AlbumID AND al.release_year = 2020
-WHERE al.AlbumID IS NULL;
-
+SELECT artist_name
+FROM artists 
+WHERE artistid NOT IN (
+	SELECT aa.artistid
+	FROM artist_albums aa
+	JOIN albums al ON aa.AlbumID = al.albumid 
+	WHERE al.release_year = 2020
+);
+	
 -- Названия сборников, в которых присутствует конкретный исполнитель - GUF (без дубликатов)
 SELECT DISTINCT c.Compilation_name
 FROM compilations c

@@ -64,3 +64,21 @@ VALUES
 	(2, 3),
 	(3, 2),
 	(3, 4);
+	
+-- Дополнение
+INSERT INTO track_list (track_name, duration, albumid)
+VALUES
+	('myself', 192, 1),
+	('by myself', 192, 1),
+	('bemy self', 192, 2),
+	('myself by', 192, 2),
+	('by myself by', 192, 3),
+	('beemy', 192, 3),
+	('premyne', 192, 3);
+	
+INSERT INTO track_list (track_name, duration, albumid)
+VALUES
+	('my own', 192, 1),
+	('own my', 192, 2),
+	('my', 192, 3),
+	('oh my god', 192, 2);
